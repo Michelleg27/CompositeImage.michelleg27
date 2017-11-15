@@ -1,51 +1,119 @@
-#include <isotream>
-#include <string>
-#include <vector>
 #include "bitmap.h"
+#include <vector>
+#include <string>
+#include <iostream>
 
 
-using namespace std; 
+using namespace std;
+vector <int> compositeImage ( vector <vector <Pixel> > bmp);
+//vector <int> imageAvg (vector <vector <Pixel> > img);
+vector <int> imgSum (vector <vector <Pixel> > img);
 
 int main()
 {
-}
-//repeatly ask the user for file name until user tyes DONE or input max which = 10
+vector <int> imageAvg (vector <vector <Pixel> > bmp);
+vector <vector <Pixel> > bmp; 
+vector <string> filenames; 
+vector <vector <Pixel> > img;
+Bitmap image; 
+Pixel rgb; 
 string input; 
-//ask to enter file name 
-do  
-    cout<<"Enter file name"<<endl;
-    cin>>input; 
-while ( input!= "DONE"   )
-{
-//checks file is vaild
+int max=0;  
+int width, height = 0; 
 
-// open file
-  Bitmap image;
-  image.open(input);
-  if( image.isImage() )
+
+do {
+    cout<<" Enter file name"<<endl; 
+    cin>>input;
+    image.open(input); 
+    if (! image.isImage())
+    {
+        cout<<"Error, not a valid image"<<endl; 
+    }
+    else if (image.isImage() && filenames.size())
+    {
+        filenames.push_back(input); 
+        bmp = image.toPixelMatrix(); 
+        width = bmp.size(); 
+        height = bmp[0].size(); 
+        max++; 
+     }
+     else if (image.isImage())
+     {
+        bmp = image.toPixelMatrix();
+     }
+     if (bmp.size() == width && bmp[0].size() == height)
+     {
+        filenames.push_back(input);
+        max++; 
+     }
+     else
+     {
+        cout<<"Error, image has wrong dimensions"<<endl; 
+     }
+ }
+     while (!(input == "DONE" || max <= 10));
+  if (filenames.size() <2)
   {
-    vector <vector < Pixel> > bmp = img.toPixelMatrix();
-    printImage(bmp);
- //pass image into vector of vetor of pixels 
+    cout<<"Error, not enough images"<<endl;
   }
+  else
+  {
+    vector <int> imageAvg;
+    vector <int> total; 
+    vector <vector <int> > files; 
+    for (int i = 0; i<filenames.size(); i++)
+    {
+        image.open(filenames[i]); 
+        bmp = image.toPixelMatrix();
+        files.push_back(imageAvg ); 
+    }
+    int imgSum;
+    for(int row=0; row<files.size(); row++)
+    {
+        for (int col=0; col<files[0].size(); col++)
+        {
+            imgSum = imgSum + files[row][col]; 
+        }
+          total.push_back(imgSum/files.size()); 
+    }
+        
+        
+   image.open(filenames[0]);
+   bmp = image.toPixelMatrix(); 
+      int count = 0; 
+    for( int r=0; r<bmp.size(); r++)
+    {
+        for( int c=0; c<bmp[0].size(); c++)
+        {
+            rgb = bmp[r][c];
+            rgb.red = rgb.green = rgb.blue = total [count];
+            bmp[r][c] = rgb; 
+            count++; 
+         }
+    }
+        return 0;
+ }
+
+ vector <int> imgAvg( vector <vector <Pixel> > img);
+ {
+    Pixel rgb; 
+    int total; 
+    vector <int> imgSum; 
+    for ( int row = 0; row<img.size(); row++)
+    {
+        for (int col = 0; col<img[0].size(); col++)
+        {
+            rgb = img [row][col];
+            total = rgb.red + rgb.green + rgb.blue;
+        }
+        imgSum.push_back(total/img.size());
+    }
+      //  return imgSum; 
 
 }
-
-//print out error : file DNE, not the same dimensions; says error but continues; if not provied with at least 2 images 
-//then an error should appear 
-
-
-
-//combine all images; composite in avg values of RGB compents for each pixel 
-//print occasional updates 
-
-bool is_valid_image(bitmap lol)
-return lol.isImage();
-
-//checks it has right dimensions 
-void printImage (vector <vector <Pixel> > bmp)
 {
-l    cout << "IM PRINTING"
+image.fromPixelMatrix(bmp);
+image.save("composite -michelleg27.bmp");
 }
-
-
+} 
